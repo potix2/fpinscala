@@ -6,7 +6,7 @@ apply {
 
 ext {
     scalaVersion = '2.10'
-    spec2Version = '2.1'
+    spec2Version = '2.2'
 }
 
 repositories {
@@ -19,6 +19,6 @@ tasks.withType(ScalaCompile) {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:$scalaVersion+"
-    testCompile "org.spec2:spec2_$scalaVersion:$spec2Version"
+    compile "org.scala-lang:scala-library:$scalaVersion.0"
+    testCompile "org.specs2:specs2_$scalaVersion:$spec2Version"
 }
