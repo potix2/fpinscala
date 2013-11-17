@@ -65,9 +65,46 @@ object List {
       case Cons(h, t) => Cons(h, append(t, a2))
     }
 
+  /**
+   * exercise6
+   */
   def init[A](l: List[A]): List[A] =
     l match {
       case Cons(h, Nil) => Nil
       case Cons(h, t) => Cons(h, init(t))
   }
+
+  def foldRight[A,B](l: List[A], z: B)(f: (A, B) => B): B =
+    l match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+    }
+
+  /**
+   * exercise10
+   */
+  @annotation.tailrec
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = l match {
+    case Nil => z
+    case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
+  }
+
+  def length[A](l: List[A]): Int =
+    foldRight(l, 0)((_,acc) => 1 + acc)
+
+  /**
+   * exercise11
+   */
+  def sum3(l: List[Int]): Int = foldLeft(l, 0)(_ + _)
+  def product3(l: List[Double]): Double = foldLeft(l, 1.0)(_ * _)
+
+  /**
+   * exercise12
+   */
+  def reverse[A](l: List[A]): List[A] = foldLeft(l, List[A]())((acc,h) => Cons(h, acc))
+
+  /**
+   * exercise13
+   */
+  def foldLeft2[A,B](l: List[A], z: B)(f: (B, A) => B): B = foldRight(reverse(l), z)((a,b) => f(b,a))
 }

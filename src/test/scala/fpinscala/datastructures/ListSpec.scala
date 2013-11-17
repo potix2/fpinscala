@@ -4,6 +4,7 @@ import org.specs2.mutable.Specification
 
 class ListSpec extends Specification {
   val ls = Cons(1, Cons(2, Cons(3, Nil)))
+  val ds = Cons(1.0, Cons(2.0, Cons(3.0, Nil)))
 
   "tail" should {
     "return tail of list" in {
@@ -32,6 +33,61 @@ class ListSpec extends Specification {
   "init" should {
     "returns a List consisting of all but the last element of a List" in {
       List.init(ls) must_== Cons(1, Cons(2, Nil))
+    }
+  }
+
+  "product" should {
+    "multiply the elements of the list" in {
+      List.product(ds) must_== 6.0
+    }
+  }
+
+  "foldRight" should {
+    "construct new List when Cons and Nil are passed" in {
+      List.foldRight(ls, Nil:List[Int])(Cons(_,_)) must_== Cons(1, Cons(2, Cons(3, Nil)))
+    }
+  }
+
+  // exercise: 9
+  "length" should {
+    "return zero with Nil" in {
+      List.length(Nil) must_== 0
+    }
+    "return the length of the list" in {
+      List.length(ls) must_== 3
+    }
+  }
+
+  "foldLeft" should {
+    "multiply the elements of the list" in {
+      List.foldLeft(ds, 1.0)(_ * _) must_== 6.0
+    }
+  }
+
+  "sum3" should {
+    "add the elements of the list" in {
+      List.sum3(ls) must_== 6
+    }
+  }
+
+  "product3" should {
+    "multiply the elements of the list" in {
+      List.product3(ds) must_== 6.0
+    }
+  }
+
+  "reverse" should {
+    "construct new list with elements in reversed order" in {
+      List.reverse(ls) must_== List(3,2,1)
+    }
+    "return Nil when Nil is passed" in {
+      List.reverse(Nil) must_== Nil
+    }
+  }
+
+  "foldLeft2" should {
+    "multiply the elements of the list" in {
+      List.foldLeft2(ds, 1.0)(_ * _) must_== 6.0
     }
   }
 }

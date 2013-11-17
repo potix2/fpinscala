@@ -19,3 +19,11 @@ List.setHead(ex3)("c")
 List.drop(ex3,0)
 List.drop(ex3,1)
 List.drop(ex3,2)
+def productR(ds: List[Double]): Double = List.foldRight(ds, 1.0) { (a, b) =>
+  println(a)
+  if ( a == 0.0 )
+    0.0
+  else
+    a * b
+}
+productR(List(1.0, 0.0, 2.0, 3.0))
