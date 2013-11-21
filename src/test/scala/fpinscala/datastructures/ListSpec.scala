@@ -90,4 +90,13 @@ class ListSpec extends Specification {
       List.foldLeft2(ds, 1.0)(_ * _) must_== 6.0
     }
   }
+
+  "flatten" should {
+    "return empty list with empty list" in {
+      List.flatten(List()) must_== List()
+    }
+    "concatenate a list of lists into a single list" in {
+      List.flatten(List(List(1), List(2,3))) must_== List(1,2,3)
+    }
+  }
 }

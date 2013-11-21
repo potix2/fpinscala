@@ -107,4 +107,6 @@ object List {
    * exercise13
    */
   def foldLeft2[A,B](l: List[A], z: B)(f: (B, A) => B): B = foldRight(reverse(l), z)((a,b) => f(b,a))
+
+  def flatten[A](l: List[List[A]]): List[A] = foldLeft(l, List[A]())((b,a) => append(b,a))
 }
