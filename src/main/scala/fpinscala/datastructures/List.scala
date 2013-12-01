@@ -142,4 +142,9 @@ object List {
    * exercise20
    */
   def flatMap[A,B](l: List[A])(f: A => List[B]): List[B] = flatten(map(l)(f))
+
+  /**
+   * exercise21
+   */
+  def filter2[A](l: List[A])(p: A => Boolean): List[A] = flatMap(l)(a => if (p(a)) List(a) else List())
 }
