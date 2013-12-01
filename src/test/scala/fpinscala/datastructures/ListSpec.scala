@@ -133,4 +133,10 @@ class ListSpec extends Specification {
     }
   }
 
+  "filter" should {
+    "find the elements that matches predicate" in {
+      List.filter(List(1,2,3,4,5,6))(_ % 2 == 0) must_== List(2,4,6)
+    }
+  }
+
 }
