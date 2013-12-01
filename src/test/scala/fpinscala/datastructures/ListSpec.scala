@@ -91,6 +91,21 @@ class ListSpec extends Specification {
     }
   }
 
+  "append2" should {
+    "return empty list with empty list" in {
+      List.append2(List(), List()) must_== List()
+    }
+    "return left hand side when right hand side is empty list" in {
+      List.append2(List(1,2,3), List()) must_== List(1,2,3)
+    }
+    "return right hand side when elft hand side is empty list" in {
+      List.append2(List(), List(1,2,3)) must_== List(1,2,3)
+    }
+    "return right hand side when elft hand side is empty list" in {
+      List.append2(List(1,2,3), List(4,5,6)) must_== List(1,2,3,4,5,6)
+    }
+  }
+
   "flatten" should {
     "return empty list with empty list" in {
       List.flatten(List()) must_== List()
