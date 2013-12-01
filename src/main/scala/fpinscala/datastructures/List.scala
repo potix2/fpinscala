@@ -137,4 +137,9 @@ object List {
    * exercise19
    */
   def filter[A](l: List[A])(p: A => Boolean) : List[A] = foldRight(l, List[A]())((a,b) => if (p(a)) Cons(a, b) else b)
+
+  /**
+   * exercise20
+   */
+  def flatMap[A,B](l: List[A])(f: A => List[B]): List[B] = flatten(map(l)(f))
 }

@@ -139,4 +139,10 @@ class ListSpec extends Specification {
     }
   }
 
+  "flatMap" should {
+    "aa" in {
+      List.flatMap(List(1,2,3))(i => List(i,i)) must_== List(1,1,2,2,3,3)
+    }
+  }
+
 }
