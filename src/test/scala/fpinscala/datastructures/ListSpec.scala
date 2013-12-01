@@ -114,4 +114,23 @@ class ListSpec extends Specification {
       List.flatten(List(List(1), List(2,3))) must_== List(1,2,3)
     }
   }
+
+  "addOne" should {
+    "add one to each elements of passed list" in {
+      List.addOne(List(1,2,3)) must_== List(2,3,4)
+    }
+  }
+
+  "doubleToString" should {
+    "convert double elements to string" in {
+      List.doubleToString(List(1.0,2.0,3.0)) must_== List("1.0", "2.0", "3.0")
+    }
+  }
+
+  "map" should {
+    "apply f to each elements of passed list" in {
+      List.map(List(1.0,2.0,3.0))(_.toString()) must_== List("1.0", "2.0", "3.0")
+    }
+  }
+
 }

@@ -117,4 +117,19 @@ object List {
    * exercise15
    */
   def flatten[A](l: List[List[A]]): List[A] = foldLeft(l, List[A]())((b,a) => append(b,a))
+
+  /**
+   * exercise16
+   */
+  def addOne(l: List[Int]): List[Int] = foldRight(l, List[Int]())((a,b) => Cons(a + 1, b))
+
+  /**
+   * exercise17
+   */
+  def doubleToString(l: List[Double]): List[String] = foldRight(l, List[String]())((a,b) => Cons(a.toString(), b))
+
+  /**
+   * exercise18
+   */
+  def map[A,B](l: List[A])(f: A => B): List[B] = foldRight(l, List[B]())((a,b) => Cons(f(a), b))
 }
