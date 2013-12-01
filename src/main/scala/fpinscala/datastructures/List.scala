@@ -147,4 +147,30 @@ object List {
    * exercise21
    */
   def filter2[A](l: List[A])(p: A => Boolean): List[A] = flatMap(l)(a => if (p(a)) List(a) else List())
+
+  /**
+   * exercise22
+   */
+  def zipAdd(l: List[Int], r: List[Int]): List[Int] = l match {
+    case Cons(lh, lt) => r match {
+      case Cons(rh, rt) => Cons(lh + rh, zipAdd(lt, rt))
+      case _ => Nil
+    }
+    case _ => Nil
+  }
+
+  /**
+   * exercise23
+   */
+  def zipWith[A,B](l: List[A], r: List[A])(f: (A,A) => B): List[B] = {
+    def rec(ll: List[A], rr: List[A]): List[B] = ll match {
+      case Cons(lh, lt) => rr match {
+        case Cons(rh, rt) => Cons(f(lh, rh), rec(lt, rt))
+        case _ => Nil
+      }
+      case _ => Nil
+    }
+
+    rec(l,r)
+  }
 }
