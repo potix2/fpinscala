@@ -151,17 +151,23 @@ object List {
   /**
    * exercise22
    */
-  def zipAdd(l: List[Int], r: List[Int]): List[Int] = l match {
-    case Cons(lh, lt) => r match {
-      case Cons(rh, rt) => Cons(lh + rh, zipAdd(lt, rt))
-      case _ => Nil
-    }
+  def zipWithAddition(l: List[Int], r: List[Int]): List[Int] = (l,r) match {
+    case (Cons(lh, lt), Cons(rh, rt)) => Cons(lh + rh, zipWithAddition(lt, rt))
     case _ => Nil
   }
 
   /**
    * exercise23
    */
+  def zipWith[A,B](l: List[A], r: List[A])(f: (A,A) => B): List[B] = {
+    def rec(ll: List[A], rr: List[A]): List[B] = (ll,rr) match {
+      case (Cons(lh, lt), Cons(rh, rt)) => Cons(f(lh, rh), rec(lt, rt))
+      case _ => Nil
+    }
+
+    rec(l,r)
+  }
+  /*
   def zipWith[A,B](l: List[A], r: List[A])(f: (A,A) => B): List[B] = {
     def rec(ll: List[A], rr: List[A]): List[B] = ll match {
       case Cons(lh, lt) => rr match {
@@ -173,4 +179,5 @@ object List {
 
     rec(l,r)
   }
+  */
 }
