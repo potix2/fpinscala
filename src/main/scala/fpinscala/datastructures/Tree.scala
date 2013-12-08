@@ -12,4 +12,15 @@ object Tree {
     case Leaf(_) => 1
     case Branch(l,r) => 1 + size(l) + size(r)
   }
+
+  /**
+   * exercise26
+   */
+  def maximum(t: Tree[Int]): Int = {
+    def rec(tt: Tree[Int], m: Int): Int = tt match {
+      case Leaf(v) => m.max(v)
+      case Branch(l,r) => rec(r, rec(l, m))
+    }
+    rec(t, Int.MinValue)
+  }
 }
