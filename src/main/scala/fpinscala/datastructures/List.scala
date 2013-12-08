@@ -167,17 +167,25 @@ object List {
 
     rec(l,r)
   }
-  /*
-  def zipWith[A,B](l: List[A], r: List[A])(f: (A,A) => B): List[B] = {
-    def rec(ll: List[A], rr: List[A]): List[B] = ll match {
-      case Cons(lh, lt) => rr match {
-        case Cons(rh, rt) => Cons(f(lh, rh), rec(lt, rt))
-        case _ => Nil
-      }
-      case _ => Nil
+
+  /**
+   * exercise24
+   */
+  def subsequence[A](l: List[A]): List[List[A]] = l match {
+    case Cons(h, t) => Cons(l, subsequence(t))
+    case _ => Nil
+  }
+
+  def exists[A](l: List[A])(p: A => Boolean): Boolean = foldLeft(l, false)((b,a) => b || p(a))
+
+  def hasSubsequence[A](l: List[A], sub: List[A]): Boolean = {
+    def p(ll: List[A], ss: List[A]): Boolean = (ll, ss) match {
+      case (Cons(h1,t1), Nil) => true
+      case (Cons(h1,t1), Cons(h2,t2)) if h1 == h2 => p(t1,t2)
+      case _ => false
     }
 
-    rec(l,r)
+    //Streamを使うと効率的?
+    exists(subsequence(l))(p(_,sub))
   }
-  */
 }

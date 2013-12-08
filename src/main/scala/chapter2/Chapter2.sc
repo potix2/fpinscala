@@ -20,4 +20,3 @@ val square = (x: Int) => x * x
 val addOne = (y: Int) => y + 1
 compose(square, addOne)(2)
 
-

@@ -163,4 +163,30 @@ class ListSpec extends Specification {
     }
   }
 
+  "subsequence" should {
+    "be empty with the empty list" in {
+      List.subsequence(List()) must_== List()
+    }
+    "return the list of subsequences" in {
+      List.subsequence(List(1,2,3)) must_== List(List(1,2,3), List(2,3), List(3))
+    }
+  }
+
+  "exists" should {
+    "be false when no element satisfy a given predicate" in {
+      List.exists(List(1,2,3))(_ > 4) must beFalse
+    }
+    "be true when an element satisfies a given predicate" in {
+      List.exists(List(1,2,3))(_ == 3) must beTrue
+    }
+  }
+
+  "hasSubsequence" should {
+    "be true when the list contains another List" in {
+      List.hasSubsequence(List(1,2,3,4), List(1,2)) must beTrue
+    }
+    "be false when the list doesnt contains another list" in {
+      List.hasSubsequence(List(1,2,3,4), List(4,5)) must beFalse
+    }
+  }
 }
