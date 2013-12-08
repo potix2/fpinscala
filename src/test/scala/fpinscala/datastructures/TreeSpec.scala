@@ -39,4 +39,10 @@ class TreeSpec extends Specification {
       Tree.map(Branch(Leaf(1), Branch(Leaf(2), Leaf(3))))(_ * 2) must_== Branch(Leaf(2), Branch(Leaf(4), Leaf(6)))
     }
   }
+
+  "fold" should {
+    "returns new elements" >> {
+      Tree.fold(Branch(Leaf(1), Branch(Leaf(2), Leaf(3))))((a) => List(a))((l,r) => List.append(l,r)) must_== List(1,2,3)
+    }
+  }
 }
