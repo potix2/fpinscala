@@ -32,4 +32,11 @@ class TreeSpec extends Specification {
       Tree.depth(Branch(Leaf(1), Branch(Branch(Leaf(2), Leaf(3)), Leaf(4)))) must_== 4
     }
   }
+
+  "map" should {
+    "returns elements applied a function" >> {
+      Tree.map(Leaf(1))(_ * 2) must_== Leaf(2)
+      Tree.map(Branch(Leaf(1), Branch(Leaf(2), Leaf(3))))(_ * 2) must_== Branch(Leaf(2), Branch(Leaf(4), Leaf(6)))
+    }
+  }
 }
