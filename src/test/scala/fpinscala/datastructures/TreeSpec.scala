@@ -21,4 +21,15 @@ class TreeSpec extends Specification {
       Tree.maximum(Branch(Leaf(1), Branch(Leaf(3), Leaf(2)))) must_== 3
     }
   }
+
+  "depth" should {
+    "be one with a leaf" in {
+      Tree.depth(Leaf(1)) must_== 1
+    }
+    "return the maximum path length from the root of a tree to any leaf" >> {
+      Tree.depth(Branch(Leaf(1), Leaf(2))) must_== 2
+      Tree.depth(Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))) must_== 3
+      Tree.depth(Branch(Leaf(1), Branch(Branch(Leaf(2), Leaf(3)), Leaf(4)))) must_== 4
+    }
+  }
 }
