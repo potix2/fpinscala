@@ -1,7 +1,5 @@
 package fpinscala.errorhandling
 
-import java.util.regex.Pattern
-import java.util.regex.PatternSyntaxException
 import scala.{Option => _, Either => _, _} // hide std library `Option` and `Either`, since we are writing our own in this chapter
 
 sealed trait Option[+A] {
@@ -31,6 +29,7 @@ case object None extends Option[Nothing]
 
 object Option {
 
+
   def mean(xs: Seq[Double]): Option[Double] =
     if (xs.isEmpty) None
     else Some(xs.sum / xs.length)
@@ -55,4 +54,13 @@ object Option {
     case h :: t => h flatMap(hh => sequence(t) map(hh :: _) ) //cf. map2!!!
   }
 
+  /**
+   * exercise5
+   */
+  def traverse[A,B](a: List[A])(f: A => Option[B]): Option[List[B]] = a match {
+    case Nil => Some(Nil)
+    case h :: t => map2(f(h), traverse(t)(f))(_ :: _)
+  }
+
+  def sequence_1[A](s: List[Option[A]]): Option[List[A]] = Option.traverse(s)(x => x.flatMap(Some(_)))
 }

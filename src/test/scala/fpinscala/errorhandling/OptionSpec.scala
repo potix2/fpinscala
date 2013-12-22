@@ -27,4 +27,20 @@ class OptionSpec extends Specification {
       Option.sequence(List(Some(1), Some(2))) must_== Some(List(1,2))
     }
   }
+  "traverse" should {
+    "return Some list when none elements doesn't exist" in {
+      Option.traverse(List(1,2,3))(x => Some(x)) must_== Some(List(1,2,3))
+    }
+    "be None when a none element exists" in {
+      Option.traverse(List(1,2,3))(x => if ( x % 2 == 0) None else Some(x)) must_== None
+    }
+  }
+  "sequence_1" should {
+    "be None when a None exists in the passed list" in {
+      Option.sequence_1(List(Some(1), None)) must_== None
+    }
+    "return Some list when no None element exists in the passed list" in {
+      Option.sequence_1(List(Some(1), Some(2))) must_== Some(List(1,2))
+    }
+  }
 }
