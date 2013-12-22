@@ -30,6 +30,7 @@ case class Some[+A](get: A) extends Option[A]
 case object None extends Option[Nothing]
 
 object Option {
+
   def mean(xs: Seq[Double]): Option[Double] =
     if (xs.isEmpty) None
     else Some(xs.sum / xs.length)
@@ -46,19 +47,12 @@ object Option {
   def map2[A,B,C](a: Option[A], b: Option[B])(f: (A,B) => C): Option[C] =
     a.flatMap(x => b.map(f.curried(x)))
 
-  def pattern(s: String): Option[Pattern] =
-    try {
-      Some(Pattern.compile(s))
-    } catch {
-      case e: PatternSyntaxException => None
-    }
-
-  def mkMatcher(pat: String): Option[String => Boolean] =
-    pattern(pat) map (p => (s: String) => p.matcher(s).matches)
-
   /**
    * exercise4
    */
-  def bothMatch(pat1: String, pat2: String, s: String): Option[Boolean] =
-    map2(mkMatcher(pat1), mkMatcher(pat2))(_(s) && _(s))
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = a match {
+    case Nil => Some(Nil)
+    case h :: t => h flatMap(hh => sequence(t) map(hh :: _) ) //cf. map2!!!
+  }
+
 }
