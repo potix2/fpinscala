@@ -19,4 +19,15 @@ class OptionSpec extends Specification {
       Option.map2(Some(1), Some(2))(_ + _) must_== Some(3)
     }
   }
+  "bothMatch" should {
+    "be None when a pattern is invalid" in {
+      Option.bothMatch("[a-z]+", "][", "abcd") must_== None
+    }
+    "be Some(false) when the patterns are valid and a subject string is not matched" in {
+      Option.bothMatch("[a-z]+", "[0-9]+", "abcd") must_== Some(false)
+    }
+    "be Some(true) when the patterns are valid and a subject string is matched" in {
+      Option.bothMatch("[a-z]+", "[a-z]+", "abcd") must_== Some(true)
+    }
+  }
 }
