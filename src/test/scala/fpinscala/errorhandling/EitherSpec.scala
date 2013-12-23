@@ -42,4 +42,20 @@ class EitherSpec extends Specification {
       l.map2(Right(2))(_ + _) must_== Left(1)
     }
   }
+  "traverse" should {
+    "return Right list when Left elements doesn't exist" in {
+      Either.traverse(List(1,2,3))(x => Right(x)) must_== Right(List(1,2,3))
+    }
+    "be None when a none element exists" in {
+      Either.traverse(List(1,2,3))(x => if ( x % 2 == 0) Left(x) else Right(x)) must_== Left(2)
+    }
+  }
+  "sequence" should {
+    "be Left value when a Left exists in the passed list" in {
+      Either.sequence(List(Right(1), Left("fail"))) must_== Left("fail")
+    }
+    "return Right list when no Left value exists in the passed list" in {
+      Either.sequence(List(Right(1), Right(2))) must_== Right(List(1,2))
+    }
+  }
 }
