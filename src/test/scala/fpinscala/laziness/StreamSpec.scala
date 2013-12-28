@@ -11,4 +11,9 @@ class StreamSpec extends Specification {
       Stream(1,2,3,4).toList must_== List(1,2,3,4)
     }
   }
+  "take" should {
+    "return the first 2 elements" in {
+      Stream(1,2,3,4).take(2).toList must_== List(1,2)
+    }
+  }
 }

@@ -10,11 +10,17 @@ sealed abstract class Stream[+A] {
    * exercise1
    */
   def toList: List[A]
+
+  /**
+   * exercise2
+   */
+  def take(n: Int): Stream[A]
 }
 
 object Empty extends Stream[Nothing] {
   val uncons = None
   val toList = Nil
+  def take(n: Int): Stream[Nothing] = this
 }
 
 sealed abstract class Cons[+A] extends Stream[A] {
@@ -22,6 +28,8 @@ sealed abstract class Cons[+A] extends Stream[A] {
   def tail: Stream[A]
   val uncons = Some(this)
   def toList: List[A] = head :: tail.toList
+  def take(n: Int): Stream[A] =
+    if (n == 0) Empty else Stream.cons(head, tail.take(n - 1))
 }
 
 object Stream {
