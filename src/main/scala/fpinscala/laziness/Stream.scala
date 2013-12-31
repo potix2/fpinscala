@@ -9,17 +9,31 @@ sealed abstract class Stream[+A] {
   /**
    * exercise1
    */
-  def toList: List[A]
+  def toList: List[A] =
+    uncons match {
+      case Some(c) => c.head :: c.tail.toList
+      case None => Nil
+    }
 
   /**
    * exercise2
    */
-  def take(n: Int): Stream[A]
+  def take(n: Int): Stream[A] =
+    if (n > 0) uncons match {
+      case Some(c) if (n == 1) => cons(c.head, empty)
+      case Some(c) => cons(c.head, c.tail.take(n - 1))
+      case _ => empty
+    }
+    else empty
 
   /**
    * exercise3
    */
-  def takeWhile(p: A => Boolean): Stream[A]
+  def takeWhile(p: A => Boolean): Stream[A] =
+    uncons match {
+      case Some(c) if (p(c.head)) => cons(c.head, c.tail.takeWhile(p))
+      case _ => empty
+    }
 
   def exists(p: A => Boolean): Boolean =
     foldRight(false)((a,b) => p(a) || b)
@@ -45,21 +59,12 @@ sealed abstract class Stream[+A] {
 
 object Empty extends Stream[Nothing] {
   val uncons = None
-  val toList = Nil
-  def take(n: Int): Stream[Nothing] = this
-  def takeWhile(p: Nothing => Boolean): Stream[Nothing] = this
 }
 
 sealed abstract class Cons[+A] extends Stream[A] {
   def head: A
   def tail: Stream[A]
   val uncons = Some(this)
-  def toList: List[A] = head :: tail.toList
-  def take(n: Int): Stream[A] =
-    if (n == 0) Empty else Stream.cons(head, tail.take(n - 1))
-
-  def takeWhile(p: A => Boolean): Stream[A] =
-    if (p(head)) Stream.cons(head, tail.takeWhile(p)) else Empty
 }
 
 object Stream {
