@@ -35,6 +35,12 @@ sealed abstract class Stream[+A] {
    */
   def forAll(p: A => Boolean): Boolean =
     foldRight(true)((a,b) => p(a) && b)
+
+  /**
+   * exercise5
+   */
+  def takeWhile_2(p: A => Boolean): Stream[A] =
+    foldRight(empty[A])((a,b) => if (p(a)) cons(a, b) else empty)
 }
 
 object Empty extends Stream[Nothing] {

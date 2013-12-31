@@ -37,4 +37,9 @@ class StreamSpec extends Specification {
       Stream(2,4,6,8,11,12).forAll(_ % 2 == 0) must beFalse
     }
   }
+  "takeWhile_2" should {
+    "return the all starting elements of a Stream that match the given predicate" in {
+      Stream(1,2,3,4,3,2,1).takeWhile_2(_ < 3).toList must_== List(1,2)
+    }
+  }
 }
