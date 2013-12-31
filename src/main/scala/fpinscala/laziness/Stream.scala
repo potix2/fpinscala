@@ -20,6 +20,21 @@ sealed abstract class Stream[+A] {
    * exercise3
    */
   def takeWhile(p: A => Boolean): Stream[A]
+
+  def exists(p: A => Boolean): Boolean =
+    foldRight(false)((a,b) => p(a) || b)
+
+  def foldRight[B](z: => B)(f: (A, => B) => B): B =
+    uncons match {
+      case Some(c) => f(c.head, c.tail.foldRight(z)(f))
+      case None => z
+    }
+
+  /**
+   * exercise4
+   */
+  def forAll(p: A => Boolean): Boolean =
+    foldRight(true)((a,b) => p(a) && b)
 }
 
 object Empty extends Stream[Nothing] {
