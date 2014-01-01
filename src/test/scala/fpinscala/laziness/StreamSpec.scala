@@ -67,4 +67,9 @@ class StreamSpec extends Specification {
       Stream(1,2,3).flatMap(Stream(_)).toList must_== List(1,2,3)
     }
   }
+  "constant" should {
+    "return a infinite Stream of given value" in {
+      Stream.constant(1).take(5).toList must_== List(1,1,1,1,1)
+    }
+  }
 }

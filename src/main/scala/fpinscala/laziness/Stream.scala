@@ -1,6 +1,7 @@
 package fpinscala.laziness
 
 import Stream._
+import scala.annotation.tailrec
 
 sealed abstract class Stream[+A] {
   def uncons: Option[Cons[A]]
@@ -98,4 +99,11 @@ object Stream {
 
   def apply[A](as: A*): Stream[A] =
     if (as.isEmpty) Empty else cons(as.head, apply(as.tail: _*))
+
+  def constant[A](a: A): Stream[A] = new Cons[A] {
+    val head = a
+    lazy val tail = this
+  }
+
+  val ones: Stream[Int] = constant(1)
 }
