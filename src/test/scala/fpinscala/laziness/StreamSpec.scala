@@ -68,8 +68,13 @@ class StreamSpec extends Specification {
     }
   }
   "constant" should {
-    "return a infinite Stream of given value" in {
+    "return an infinite Stream of given value" in {
       Stream.constant(1).take(5).toList must_== List(1,1,1,1,1)
+    }
+  }
+  "from" should {
+    "return an infinite Stream of integers, starting from n, then n + 1, n + 2 ..." in  {
+      Stream.from(10).take(5).toList must_== List(10,11,12,13,14)
     }
   }
 }

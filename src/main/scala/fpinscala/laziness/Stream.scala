@@ -100,9 +100,20 @@ object Stream {
   def apply[A](as: A*): Stream[A] =
     if (as.isEmpty) Empty else cons(as.head, apply(as.tail: _*))
 
+  /**
+   * exercise 8
+   */
   def constant[A](a: A): Stream[A] = new Cons[A] {
     val head = a
     lazy val tail = this
+  }
+
+  /**
+   * exercise 9
+   */
+  def from(n: Int): Stream[Int] = new Cons[Int] {
+    val head = n
+    lazy val tail = from(n+1)
   }
 
   val ones: Stream[Int] = constant(1)
