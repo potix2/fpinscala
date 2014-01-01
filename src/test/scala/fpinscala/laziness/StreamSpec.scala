@@ -77,4 +77,9 @@ class StreamSpec extends Specification {
       Stream.from(10).take(5).toList must_== List(10,11,12,13,14)
     }
   }
+  "fibs" should {
+    "return an inifinite Stream of Fibonacci numbers:" in {
+      Stream.fibs.take(7).toList must_== List(0,1,1,2,3,5,8)
+    }
+  }
 }

@@ -117,4 +117,15 @@ object Stream {
   }
 
   val ones: Stream[Int] = constant(1)
+
+  /**
+   * exercise 10
+   */
+  def fibs: Stream[Int] = {
+    def go(a: Int, b: Int): Stream[Int] = new Cons[Int] {
+      val head = a
+      lazy val tail = go(b, a + b)
+    }
+    go(0,1)
+  }
 }
