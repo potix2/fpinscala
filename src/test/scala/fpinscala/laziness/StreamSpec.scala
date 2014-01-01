@@ -42,4 +42,29 @@ class StreamSpec extends Specification {
       Stream(1,2,3,4,3,2,1).takeWhile_2(_ < 3).toList must_== List(1,2)
     }
   }
+  "filter" should {
+    "return new Stream that the all elements matching a Boolean function" in {
+      Stream(1,2,3,4,5,6).filter(_ % 2 == 0).toList must_== List(2,4,6)
+    }
+  }
+  "map" should {
+    "return a Stream that the all elements applied a function" in {
+      Stream(1,2,3,4,5,6).map(_ * 2).toList must_== List(2,4,6,8,10,12)
+    }
+  }
+  "append" should {
+    "concatenate two Streams" in {
+      Stream(1,2,3).append(Stream(4,5,6)).toList must_== List(1,2,3,4,5,6)
+    }
+  }
+  "flatten" should {
+    "make a flat Stream from the nested Stream" in {
+      Stream(Stream(1), Stream(2), Stream(3)).flatten.toList must_== List(1,2,3)
+    }
+  }
+  "flatMap" should {
+    "return a flatten stream that the all elements applied a function" in {
+      Stream(1,2,3).flatMap(Stream(_)).toList must_== List(1,2,3)
+    }
+  }
 }

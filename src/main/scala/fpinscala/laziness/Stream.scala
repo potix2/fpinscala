@@ -55,6 +55,27 @@ sealed abstract class Stream[+A] {
    */
   def takeWhile_2(p: A => Boolean): Stream[A] =
     foldRight(empty[A])((a,b) => if (p(a)) cons(a, b) else empty)
+
+  /**
+   * exercise6
+   */
+  def filter(p: A => Boolean): Stream[A] =
+    foldRight(empty[A])((a,b) => if (p(a)) cons(a, b) else b)
+
+  def map[B](f: A => B): Stream[B] =
+    foldRight(empty[B])((a,b) => cons(f(a), b))
+
+  def append[B>:A](c: Stream[B]): Stream[B] =
+    foldRight(c)((a,b) => cons(a,b))
+
+  /**
+   * @see http://scabl.blogspot.jp/2013/02/monads-in-scala-1.html
+   */
+  def flatten[B](implicit asStreamStream: Stream[A] <:< Stream[Stream[B]]): Stream[B] =
+    asStreamStream(this).foldRight(empty[B])((a,b) => a.append(b))
+
+  def flatMap[B](f: A => Stream[B]): Stream[B] =
+    map(f).flatten
 }
 
 object Empty extends Stream[Nothing] {
@@ -77,5 +98,4 @@ object Stream {
 
   def apply[A](as: A*): Stream[A] =
     if (as.isEmpty) Empty else cons(as.head, apply(as.tail: _*))
-
 }
