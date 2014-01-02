@@ -78,8 +78,16 @@ class StreamSpec extends Specification {
     }
   }
   "fibs" should {
-    "return an inifinite Stream of Fibonacci numbers:" in {
+    "return an infinite Stream of Fibonacci numbers:" in {
       Stream.fibs.take(7).toList must_== List(0,1,1,2,3,5,8)
+    }
+  }
+  "unfold" should {
+    "generate an infinite Stream of constant" in {
+      Stream.unfold(5)((s) => Some((s,s))).take(5).toList must_== List(5,5,5,5,5)
+    }
+    "generate an infinite Stream of from" in {
+      Stream.unfold(10)((s) => Some((s, s + 1))).take(5).toList must_== List(10,11,12,13,14)
     }
   }
 }
