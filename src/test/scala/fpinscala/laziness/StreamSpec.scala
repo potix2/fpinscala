@@ -90,4 +90,24 @@ class StreamSpec extends Specification {
       Stream.unfold(10)((s) => Some((s, s + 1))).take(5).toList must_== List(10,11,12,13,14)
     }
   }
+  "fibs_1" should {
+    "return an infinite Stream of Fibonacci numbers:" in {
+      Stream.fibs_1.take(7).toList must_== List(0,1,1,2,3,5,8)
+    }
+  }
+  "from_1" should {
+    "return an infinite Stream of integers, starting from n, then n + 1, n + 2 ..." in  {
+      Stream.from_1(10).take(5).toList must_== List(10,11,12,13,14)
+    }
+  }
+  "constant_1" should {
+    "return an infinite Stream of given value" in {
+      Stream.constant_1(1).take(5).toList must_== List(1,1,1,1,1)
+    }
+  }
+  "ones_1" should {
+    "return an infinite Stream of 1" in {
+      Stream.ones_1.take(5).toList must_== List(1,1,1,1,1)
+    }
+  }
 }
