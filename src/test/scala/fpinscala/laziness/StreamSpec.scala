@@ -141,4 +141,9 @@ class StreamSpec extends Specification {
       Stream(1,2,3).zipAll(Stream.constant(2)).take(4).toList must_== List((Some(1),Some(2)), (Some(2),Some(2)), (Some(3),Some(2)), (None, Some(2)))
     }
   }
+  "startsWith" should {
+    "be true when one Stream is a prefix of another" in {
+      Stream.startsWith(Stream(1,2,3), Stream(1,2)) must beTrue
+    }
+  }
 }

@@ -1,7 +1,6 @@
 package fpinscala.laziness
 
 import Stream._
-import scala.annotation.tailrec
 
 sealed abstract class Stream[+A] {
   def uncons: Option[Cons[A]]
@@ -196,4 +195,10 @@ object Stream {
   def from_1(n: Int): Stream[Int] = unfold(n)((s) => Some((s, s + 1)))
   def constant_1[A](a: A): Stream[A] = unfold(a)((s) => Some((s,s)))
   val ones_1 = unfold(1)((s) => Some((s,1)))
+
+  /**
+   * exercise 14
+   */
+  def startsWith[A](s: Stream[A], s2: Stream[A]): Boolean =
+    s.zip(s2).forAll(a => a._1 == a._2)
 }
