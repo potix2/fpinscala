@@ -54,7 +54,7 @@ sealed abstract class Stream[+A] {
   /**
    * exercise5
    */
-  def takeWhile_2(p: A => Boolean): Stream[A] =
+  def takeWhile_1(p: A => Boolean): Stream[A] =
     foldRight(empty[A])((a,b) => if (p(a)) cons(a, b) else empty)
 
   /**
@@ -77,6 +77,57 @@ sealed abstract class Stream[+A] {
 
   def flatMap[B](f: A => Stream[B]): Stream[B] =
     map(f).flatten
+
+  /**
+   * exercise13
+   */
+  def map_1[B](f: A => B): Stream[B] =
+    unfold(this)((s) =>
+      s.uncons match {
+        case Some(c) => Some((f(c.head), c.tail))
+        case None => None
+      })
+
+  def take_1(n: Int): Stream[A] =
+    unfold((this, n))((s) =>
+      if (s._2 > 0)
+        s._1.uncons match {
+          case Some(c) => Some((c.head, (c.tail, s._2 - 1)))
+          case _ => None
+        }
+      else None)
+
+  def takeWhile_2(p: A => Boolean): Stream[A] =
+    unfold(this)((s) =>
+      s.uncons match {
+        case Some(c) if (p(c.head)) => Some((c.head, c.tail))
+        case _ => None
+      })
+
+  def zip[B](c: Stream[B]): Stream[(A,B)] =
+    zipWith(c)((_,_))
+
+  def zipWith[B, C](c: Stream[B])(f: (A, B) => C): Stream[C] =
+    unfold((this, c)) { case (s1,s2) =>
+      (s1.uncons, s2.uncons) match {
+        case (Some(a), Some(b)) => Some((f(a.head, b.head), (a.tail, b.tail)))
+        case _ => None
+      }
+    }
+
+  def zipAll[B](s: Stream[B]): Stream[(Option[A], Option[B])] =
+    zipWithAll(s)((_,_))
+
+  def zipWithAll[B,C](s: Stream[B])(f: (Option[A],Option[B]) => C): Stream[C] = {
+    val a = this map (Some(_)) append constant(None)
+    val b = s map (Some(_)) append constant(None)
+    unfold((a,b)) {
+      case (s1,s2) => for {
+        c1 <- s1.uncons
+        c2 <- s2.uncons
+      } yield (f(c1.head, c2.head), (c1.tail, c2.tail))
+    }
+  }
 }
 
 object Empty extends Stream[Nothing] {

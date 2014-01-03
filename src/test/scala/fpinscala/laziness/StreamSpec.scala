@@ -37,9 +37,9 @@ class StreamSpec extends Specification {
       Stream(2,4,6,8,11,12).forAll(_ % 2 == 0) must beFalse
     }
   }
-  "takeWhile_2" should {
+  "takeWhile_1" should {
     "return the all starting elements of a Stream that match the given predicate" in {
-      Stream(1,2,3,4,3,2,1).takeWhile_2(_ < 3).toList must_== List(1,2)
+      Stream(1,2,3,4,3,2,1).takeWhile_1(_ < 3).toList must_== List(1,2)
     }
   }
   "filter" should {
@@ -108,6 +108,37 @@ class StreamSpec extends Specification {
   "ones_1" should {
     "return an infinite Stream of 1" in {
       Stream.ones_1.take(5).toList must_== List(1,1,1,1,1)
+    }
+  }
+  "map_1" should {
+    "return a Stream that the all elements applied a function" in {
+      Stream(1,2,3,4,5,6).map_1(_ * 2).toList must_== List(2,4,6,8,10,12)
+    }
+  }
+  "take_1" should {
+    "return the first 2 elements" in {
+      Stream(1,2,3,4).take_1(2).toList must_== List(1,2)
+    }
+  }
+  "takeWhile_2" should {
+    "return the all starting elements of a Stream that match the given predicate" in {
+      Stream(1,2,3,4,3,2,1).takeWhile_2(_ < 3).toList must_== List(1,2)
+    }
+  }
+  "zip" should {
+    "return a Stream that every two elements from input Streams at the same position" in {
+      Stream.constant(1).zip(Stream.constant(2)).take(3).toList must_== List((1,2), (1,2), (1,2))
+    }
+    "return the finite Stream that is the same length as the input Stream" in {
+      Stream(1,2,3).zip(Stream.constant(2)).toList must_== List((1,2), (2,2), (3,2))
+    }
+    "return the finite Stream that is the same length as the input Stream" in {
+      Stream.constant(1).zip(Stream(1,2,3)).toList must_== List((1,1), (1,2), (1,3))
+    }
+  }
+  "zipAll" should {
+    "return the infinite Stream" in {
+      Stream(1,2,3).zipAll(Stream.constant(2)).take(4).toList must_== List((Some(1),Some(2)), (Some(2),Some(2)), (Some(3),Some(2)), (None, Some(2)))
     }
   }
 }
