@@ -127,6 +127,15 @@ sealed abstract class Stream[+A] {
       } yield (f(c1.head, c2.head), (c1.tail, c2.tail))
     }
   }
+
+  /**
+   * exercise 15
+   */
+  def tails: Stream[Stream[A]] =
+    unfold(this)(s => s.uncons match {
+      case Some(c) => Some(s, c.tail)
+      case _ => None
+    }) append(Stream(empty))
 }
 
 object Empty extends Stream[Nothing] {

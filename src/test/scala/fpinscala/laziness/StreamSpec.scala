@@ -146,4 +146,9 @@ class StreamSpec extends Specification {
       Stream.startsWith(Stream(1,2,3), Stream(1,2)) must beTrue
     }
   }
+  "tails" should {
+    "returns the Stream of suffixes of the input sequence, starting with the original Stream" in {
+      Stream(1,2,3).tails.map(_.toList).toList must_== List(List(1,2,3), List(2,3), List(3), List())
+    }
+  }
 }
