@@ -151,4 +151,14 @@ class StreamSpec extends Specification {
       Stream(1,2,3).tails.map(_.toList).toList must_== List(List(1,2,3), List(2,3), List(3), List())
     }
   }
+  "scanRight" should {
+    "returns a Stream of the intermediate results" in {
+      Stream(1,2,3).scanRight(0)(_ + _).toList must_== List(6,5,3,0)
+    }
+  }
+  "scanRightViaUnfold" should {
+    "returns a Stream of the intermediate results" in {
+      Stream(1,2,3).scanRightViaUnfold(0)(_ + _).toList must_== List(6,5,3,0)
+    }
+  }
 }

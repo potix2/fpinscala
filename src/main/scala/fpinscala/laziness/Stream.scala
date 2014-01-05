@@ -136,6 +136,23 @@ sealed abstract class Stream[+A] {
       case Some(c) => Some(s, c.tail)
       case _ => None
     }) append(Stream(empty))
+
+  /**
+   * exercise 16
+   * unfoldを使って実装することはできない。O(n)になるように実装するためにはaccumulatorを使う方法が考えられる。ここで、結合性に着目すると
+   * scanRightは右結合的でunfoldは左結合的なのでscanRightをunfoldとaccumulatorを使って実装することはできない。
+   */
+  def scanRight[B](z: B)(f: (A, => B) => B): Stream[B] =
+    foldRight((z, Stream(z)))((a,b) => {
+      val b2 = f(a, b._1)
+      (b2, cons(b2, b._2))
+    })._2
+
+  def scanRightViaUnfold[B](z: B)(f: (A, => B) => B): Stream[B] =
+    unfold(this)(s => s.uncons match {
+      case Some(c) => Some(s.foldRight(z)(f), c.tail)
+      case _ => None
+    }) append(Stream(z))
 }
 
 object Empty extends Stream[Nothing] {
