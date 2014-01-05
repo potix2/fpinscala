@@ -141,6 +141,16 @@ sealed abstract class Stream[+A] {
    * exercise 16
    * unfoldを使って実装することはできない。O(n)になるように実装するためにはaccumulatorを使う方法が考えられる。ここで、結合性に着目すると
    * scanRightは右結合的でunfoldは左結合的なのでscanRightをunfoldとaccumulatorを使って実装することはできない。
+   *
+   * ex. Stream(1,2,3).scanRight(0)(_ + _)
+   *
+   *    f(1, f(2, f(3, (0, 0))))
+   *              ^^^^^^^^^^^^
+   * => f(1, f(2, (3, 3 :: 0)))
+   *         ^^^^^^^^^^^^^^^^^
+   * => f(1, (5, 5 :: 3 :: 0))
+   *    ^^^^^^^^^^^^^^^^^^^^^^
+   * => (6, 6 :: 5 :: 3 :: 0)
    */
   def scanRight[B](z: B)(f: (A, => B) => B): Stream[B] =
     foldRight((z, Stream(z)))((a,b) => {
