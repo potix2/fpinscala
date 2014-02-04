@@ -31,4 +31,11 @@ object RNG {
       (i, rng2)
   }
 
+  /**
+   * exercise2
+   */
+  def double(rng: RNG): (Double, RNG) = {
+    val (i, rng2) = rng.nextInt
+    (i.toDouble / Int.MaxValue, rng2)
+  }
 }

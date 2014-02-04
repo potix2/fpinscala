@@ -11,4 +11,10 @@ class StateSpec extends Specification {
       RNG.positiveInt(Simple(-1))._1 must_== Int.MinValue
     }
   }
+
+  "double" should {
+    "return a double between 0 and 1" in {
+      RNG.double(Simple(43))._1 must beCloseTo(0.007703 +/- 0.00001)
+    }
+  }
 }
