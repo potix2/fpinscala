@@ -1,5 +1,7 @@
 package fpinscala.state
 
+import scala.annotation.tailrec
+
 trait RNG {
   def nextInt: (Int, RNG)
 }
@@ -37,5 +39,42 @@ object RNG {
   def double(rng: RNG): (Double, RNG) = {
     val (i, rng2) = rng.nextInt
     (i.toDouble / Int.MaxValue, rng2)
+  }
+
+  /**
+   * exercise3
+   */
+  def intDouble(rng: RNG): ((Int, Double), RNG) = {
+    val (i, rng2) = rng.nextInt
+    val (d, rng3) = double(rng2)
+    ((i, d), rng3)
+  }
+
+  def doubleInt(rng: RNG): ((Double, Int), RNG) = {
+    val (d, rng2) = double(rng)
+    val (i, rng3) = rng2.nextInt
+    ((d, i), rng3)
+  }
+
+  def double3(rng: RNG): ((Double, Double, Double), RNG) = {
+    val (d1, rng2) = double(rng)
+    val (d2, rng3) = double(rng2)
+    val (d3, rng4) = double(rng3)
+    ((d1, d2, d3), rng4)
+  }
+
+  /**
+   * exercise4
+   */
+  def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    @tailrec
+    def go(acc: List[Int])(c: Int)(r: RNG): (List[Int], RNG) =
+      if ( c == 0 )
+        (acc, r)
+      else {
+        val (i, rr) = r.nextInt
+        go(i :: acc)(c - 1)(rr)
+      }
+    go(Nil)(count)(rng)
   }
 }
