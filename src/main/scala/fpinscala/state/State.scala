@@ -6,39 +6,52 @@ trait RNG {
   def nextInt: (Int, RNG)
 }
 
-case class Simple(seed: Long) extends RNG {
-  def nextInt: (Int, RNG) = {
-    val newSeed = (seed * 0x5DEECE66DL + 0xBL) & 0xFFFFFFFFFFFFL
-    val nextRNG = Simple(newSeed)
-    val n = (newSeed >>> 16).toInt
-    (n, nextRNG)
-  }
-}
-
 object RNG {
+  case class Simple(seed: Long) extends RNG {
+    def nextInt: (Int, RNG) = {
+      val newSeed = (seed * 0x5DEECE66DL + 0xBL) & 0xFFFFFFFFFFFFL
+      val nextRNG = Simple(newSeed)
+      val n = (newSeed >>> 16).toInt
+      (n, nextRNG)
+    }
+  }
+
+  type Rand[+A] = RNG => (A, RNG)
+
+  val int: Rand[Int] = _.nextInt
+
+  def unit[A](a: A): Rand[A] =
+    rng => (a, rng)
+
+  def map[A,B](s: Rand[A])(f: A => B): Rand[B] =
+    rng => {
+      val (a, rng2) = s(rng)
+      (f(a), rng2)
+    }
+
   def randomPair(rng: RNG): ((Int, Int), RNG) = {
     val (i1,rng2) = rng.nextInt
     val (i2,rng3) = rng2.nextInt
     ((i1,i2), rng3)
   }
 
+  def positiveEven: Rand[Int] =
+    map(positiveInt)(i => i - i % 2)
+
   /**
    * exercise1
    */
   def positiveInt(rng: RNG): (Int, RNG) = {
-    val (i, rng2) = rng.nextInt
-    if (i < 0)
-      (Int.MinValue, rng2)
-    else
-      (i, rng2)
+    val (i, r) = rng.nextInt
+    (if (i < 0) -(i + 1) else i, r)
   }
 
   /**
    * exercise2
    */
   def double(rng: RNG): (Double, RNG) = {
-    val (i, rng2) = rng.nextInt
-    (i.toDouble / Int.MaxValue, rng2)
+    val (i, r) = positiveInt(rng)
+    (i / (Int.MaxValue.toDouble + 1), r)
   }
 
   /**
@@ -77,4 +90,21 @@ object RNG {
       }
     go(Nil)(count)(rng)
   }
+
+  /**
+   * exercise5
+   */
+  def double_1: Rand[Double] =
+    map(positiveInt)(i => i / (Int.MaxValue.toDouble + 1))
+
+  /**
+   * exercise6
+   */
+  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+    rng => {
+      val (a, rng2) = ra(rng)
+      val (b, rng3) = rb(rng2)
+      (f(a, b), rng3)
+    }
+
 }
