@@ -61,4 +61,10 @@ class StateSpec extends Specification {
       (RNG.map2(RNG.unit(3), RNG.unit(2))((a,b) => a * b))(Simple(2))._1 must_== 6
     }
   }
+
+  "sequence" should {
+    "combine a list of Rand into one Rand containing a list of all the random values" in {
+      RNG.sequence(List(RNG.unit(1), RNG.unit(2)))(Simple(0))._1 must_== List(1,2)
+    }
+  }
 }

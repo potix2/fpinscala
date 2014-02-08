@@ -107,4 +107,28 @@ object RNG {
       (f(a, b), rng3)
     }
 
+  def both[A,B](ra: Rand[A], rb: Rand[B]): Rand[(A,B)] =
+    map2(ra,rb)((_,_))
+
+  val randIntDouble: Rand[(Int, Double)] =
+    both(int, double_1)
+
+  val randDoubleInt: Rand[(Double, Int)] =
+    both(double_1, int)
+
+  /**
+   * exercise7
+   */
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = {
+    @tailrec
+    def go(l: List[Rand[A]], acc: List[A], r: RNG): (List[A], RNG) =
+      l match {
+        case x :: xs =>  {
+          val (a, rr) = x(r)
+          go(xs, a :: acc, rr)
+        }
+        case Nil => (acc, r)
+      }
+    rng => go(fs.reverse, List(), rng)
+  }
 }
