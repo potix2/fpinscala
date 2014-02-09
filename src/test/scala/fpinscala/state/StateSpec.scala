@@ -70,7 +70,20 @@ class StateSpec extends Specification {
 
   "positiveLessThan" should {
     "generate an integer between 0 and n" in {
-      RNG.positiveLessThan(2)(RNG.Simple(1))._1 must_== 1
+      RNG.positiveLessThan(2)(RNG.Simple(1))._1 must_== 0
     }
   }
+
+  "map_1" should {
+    "return a double between 0 and 1" in {
+      (RNG.map_1(RNG.positiveInt)(i => i / (Int.MaxValue.toDouble + 1))(RNG.Simple(43)))._1 must beCloseTo(0.007703 +/- 0.00001)
+    }
+  }
+
+  "map2_1" should {
+    "apply a function to two random integers" in {
+      (RNG.map2_1(RNG.unit(3), RNG.unit(2))((a,b) => a * b))(Simple(2))._1 must_== 6
+    }
+  }
+
 }
