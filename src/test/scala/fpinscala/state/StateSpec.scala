@@ -67,4 +67,10 @@ class StateSpec extends Specification {
       RNG.sequence(List(RNG.unit(1), RNG.unit(2)))(Simple(0))._1 must_== List(1,2)
     }
   }
+
+  "positiveLessThan" should {
+    "generate an integer between 0 and n" in {
+      RNG.positiveLessThan(2)(RNG.Simple(1))._1 must_== 1
+    }
+  }
 }

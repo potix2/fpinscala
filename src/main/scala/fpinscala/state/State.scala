@@ -119,16 +119,21 @@ object RNG {
   /**
    * exercise7
    */
-  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = {
-    @tailrec
-    def go(l: List[Rand[A]], acc: List[A], r: RNG): (List[A], RNG) =
-      l match {
-        case x :: xs =>  {
-          val (a, rr) = x(r)
-          go(xs, a :: acc, rr)
-        }
-        case Nil => (acc, r)
-      }
-    rng => go(fs.reverse, List(), rng)
-  }
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
+    fs.foldRight(RNG.unit(List[A]()))((f, acc) => map2(f, acc)(_ :: _))
+
+  /**
+   * exercise8
+   */
+  def flatMap[A,B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
+    rng => {
+      val (a, r) = f(rng)
+      g(a)(r)
+    }
+
+  def positiveLessThan(n: Int): Rand[Int] =
+    flatMap(positiveInt) { i =>
+      val mod = i % n
+      if (i + (n-1) - mod > 0) unit(mod) else positiveLessThan(n)
+    }
 }
