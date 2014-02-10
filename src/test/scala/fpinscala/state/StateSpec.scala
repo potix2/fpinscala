@@ -86,4 +86,10 @@ class StateSpec extends Specification {
     }
   }
 
+  "State.sequence" should {
+    "combine a list of Rand into one Rand containing a list of all the random values" in {
+      State.sequence[RNG,Int](List(State.unit(1), State.unit(2))).run(Simple(2))._1 must_== List(1,2)
+    }
+  }
+
 }
