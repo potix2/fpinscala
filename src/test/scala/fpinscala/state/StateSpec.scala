@@ -92,4 +92,18 @@ class StateSpec extends Specification {
     }
   }
 
+  "Machine.simulateMachine" should {
+    "not change state without inputs" in {
+      val (actualCoins, actualCandies) = Machine.simulateMachine(List()).run(Machine(true, 5, 10))._1
+      actualCandies must_== 5
+      actualCoins must_== 10
+    }
+    "not change state without inputs" in {
+      val (actualCoins, actualCandies) = Machine.simulateMachine(List(Coin,Coin,Turn,Coin,Turn)).run(Machine(true, 1, 10))._1
+      actualCandies must_== 0
+      actualCoins must_== 11
+    }
+
+  }
+
 }

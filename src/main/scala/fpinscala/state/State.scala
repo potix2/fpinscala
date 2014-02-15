@@ -171,6 +171,39 @@ object State {
   def unit[S,A](a: A): State[S,A] =
     State(s => (a, s))
 
+  def traverse[S,A,B](fs: List[State[S, A]])(f: A => B): State[S, List[B]] =
+    fs.foldRight(unit(List()): State[S, List[B]])((s, acc) => s.map2(acc)(f(_) :: _))
+
   def sequence[S,A](fs: List[State[S, A]]): State[S, List[A]] =
-    fs.foldRight(unit(List()): State[S, List[A]])((f, acc) => f.map2(acc)(_ :: _))
+    traverse(fs)(identity)
+
+  def modify[S](f: S => S): State[S, Unit] = for {
+    s <- get
+    _ <- set(f(s))
+  } yield ()
+
+  def get[S]: State[S,S] = State(s => (s,s))
+
+  def set[S](s: S): State[S, Unit] = State(_ => ((), s))
+}
+
+sealed trait Input
+case object Coin extends Input
+case object Turn extends Input
+
+case class Machine(locked: Boolean, candies: Int, coins: Int)
+
+object Machine {
+  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = for {
+    _ <- State.sequence(inputs.map(i => State.modify((s: Machine) => (i, s) match {
+      case (_, Machine(_, 0, _)) => s
+      case (Coin, Machine(false, _, _)) => s
+      case (Turn, Machine(true, _, _)) => s
+      case (Coin, Machine(true, candy, coin)) =>
+        Machine(false, candy, coin + 1)
+      case (Turn, Machine(false, candy, coin)) =>
+        Machine(true, candy - 1, coin)
+    })))
+    s <- State.get
+  } yield(s.coins, s.candies)
 }
