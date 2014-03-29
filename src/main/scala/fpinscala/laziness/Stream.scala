@@ -1,47 +1,52 @@
 package fpinscala.laziness
 
-import Stream._
+import scala.{Stream => _}
 
-sealed abstract class Stream[+A] {
-  def uncons: Option[Cons[A]]
-  def isEmpty: Boolean = uncons.isEmpty
+sealed trait Stream[+A] {
+  def headOption: Option[A] = this match {
+    case Empty => None
+    case Cons(h, t) => Some(h())
+  }
 
   /**
    * exercise1
    */
   def toList: List[A] =
-    uncons match {
-      case Some(c) => c.head :: c.tail.toList
-      case None => Nil
+    this match {
+      case Cons(h, t) => h() :: t().toList
+      case Empty => Nil
     }
 
   /**
    * exercise2
    */
-  def take(n: Int): Stream[A] =
-    if (n > 0) uncons match {
-      case Some(c) if (n == 1) => cons(c.head, empty)
-      case Some(c) => cons(c.head, c.tail.take(n - 1))
-      case _ => empty
-    }
-    else empty
+  def take(n: Int): Stream[A] = this match {
+    case Cons(h, t) if n > 0 => Stream.cons(h(), t().take(n - 1))
+    case _ => Stream.empty
+  }
+
+  def drop(n: Int): Stream[A] = this match {
+    case Cons(h, t) if n > 0 => t().drop(n - 1)
+    case s if n == 0 => s
+    case _ => Stream.empty
+  }
 
   /**
    * exercise3
    */
   def takeWhile(p: A => Boolean): Stream[A] =
-    uncons match {
-      case Some(c) if (p(c.head)) => cons(c.head, c.tail.takeWhile(p))
-      case _ => empty
+    this match {
+      case Cons(h, t) if p(h()) => Stream.cons(h(), t().takeWhile(p))
+      case _ => Stream.empty
     }
 
   def exists(p: A => Boolean): Boolean =
     foldRight(false)((a,b) => p(a) || b)
 
   def foldRight[B](z: => B)(f: (A, => B) => B): B =
-    uncons match {
-      case Some(c) => f(c.head, c.tail.foldRight(z)(f))
-      case None => z
+    this match {
+      case Cons(h,t) => f(h(), t().foldRight(z)(f))
+      case _ => z
     }
 
   /**
@@ -54,25 +59,37 @@ sealed abstract class Stream[+A] {
    * exercise5
    */
   def takeWhile_1(p: A => Boolean): Stream[A] =
-    foldRight(empty[A])((a,b) => if (p(a)) cons(a, b) else empty)
+    foldRight(Stream.empty[A])((a,b) => if (p(a)) Stream.cons(a, b) else Stream.empty)
 
   /**
    * exercise6
    */
+  def headOption_1: Option[A] =
+    foldRight(None: Option[A])((a,b) => Some(a))
+
+  /*
+  def headOption: Option[A] = this match {
+    case Empty => None
+    case Cons(h, t) => Some(h())
+  }
+  */
+  /**
+   * exercise7
+   */
   def filter(p: A => Boolean): Stream[A] =
-    foldRight(empty[A])((a,b) => if (p(a)) cons(a, b) else b)
+    foldRight(Stream.empty[A])((a,b) => if (p(a)) Stream.cons(a, b) else b)
 
   def map[B](f: A => B): Stream[B] =
-    foldRight(empty[B])((a,b) => cons(f(a), b))
+    foldRight(Stream.empty[B])((a,b) => Stream.cons(f(a), b))
 
   def append[B>:A](c: Stream[B]): Stream[B] =
-    foldRight(c)((a,b) => cons(a,b))
+    foldRight(c)((a,b) => Stream.cons(a,b))
 
   /**
    * @see http://scabl.blogspot.jp/2013/02/monads-in-scala-1.html
    */
   def flatten[B](implicit asStreamStream: Stream[A] <:< Stream[Stream[B]]): Stream[B] =
-    asStreamStream(this).foldRight(empty[B])((a,b) => a.append(b))
+    asStreamStream(this).foldRight(Stream.empty[B])((a,b) => a.append(b))
 
   def flatMap[B](f: A => Stream[B]): Stream[B] =
     map(f).flatten
@@ -81,50 +98,41 @@ sealed abstract class Stream[+A] {
    * exercise13
    */
   def map_1[B](f: A => B): Stream[B] =
-    unfold(this)((s) =>
-      s.uncons match {
-        case Some(c) => Some((f(c.head), c.tail))
-        case None => None
-      })
+    Stream.unfold(this) {
+      case Cons(h,t) => Some((f(h()), t()))
+      case Empty => None
+    }
 
   def take_1(n: Int): Stream[A] =
-    unfold((this, n))((s) =>
-      if (s._2 > 0)
-        s._1.uncons match {
-          case Some(c) => Some((c.head, (c.tail, s._2 - 1)))
-          case _ => None
-        }
-      else None)
+    Stream.unfold((this, n)) {
+      case (Cons(h,t), x) if x > 0 => Some((h(), (t(), x - 1)))
+      case _ => None
+    }
 
   def takeWhile_2(p: A => Boolean): Stream[A] =
-    unfold(this)((s) =>
-      s.uncons match {
-        case Some(c) if (p(c.head)) => Some((c.head, c.tail))
-        case _ => None
-      })
+    Stream.unfold(this) {
+      case Cons(h, t) if p(h()) => Some((h(), t()))
+      case _ => None
+    }
 
   def zip[B](c: Stream[B]): Stream[(A,B)] =
     zipWith(c)((_,_))
 
   def zipWith[B, C](c: Stream[B])(f: (A, B) => C): Stream[C] =
-    unfold((this, c)) { case (s1,s2) =>
-      (s1.uncons, s2.uncons) match {
-        case (Some(a), Some(b)) => Some((f(a.head, b.head), (a.tail, b.tail)))
-        case _ => None
-      }
+    Stream.unfold((this, c)) {
+      case (Cons(h1,t1), Cons(h2,t2)) => Some((f(h1(), h2()), (t1(), t2())))
+      case _ => None
     }
 
   def zipAll[B](s: Stream[B]): Stream[(Option[A], Option[B])] =
     zipWithAll(s)((_,_))
 
   def zipWithAll[B,C](s: Stream[B])(f: (Option[A],Option[B]) => C): Stream[C] = {
-    val a = this map (Some(_)) append constant(None)
-    val b = s map (Some(_)) append constant(None)
-    unfold((a,b)) {
-      case (s1,s2) => for {
-        c1 <- s1.uncons
-        c2 <- s2.uncons
-      } yield (f(c1.head, c2.head), (c1.tail, c2.tail))
+    val a = this.map (Some(_)) append Stream.constant(None)
+    val b = s.map (Some(_)) append Stream.constant(None)
+    Stream.unfold((a,b)) {
+      case (Cons(h1,t1), Cons(h2,t2)) => Some((f(h1(),h2()), (t1(), t2())))
+      case _ => None
     }
   }
 
@@ -132,10 +140,10 @@ sealed abstract class Stream[+A] {
    * exercise 15
    */
   def tails: Stream[Stream[A]] =
-    unfold(this)(s => s.uncons match {
-      case Some(c) => Some(s, c.tail)
+    Stream.unfold(this) {
+      case Cons(h,t) => Some((Stream.cons(h(), t()), t()))
       case _ => None
-    }) append(Stream(empty))
+    } append Stream.cons(Stream.empty[A], Stream.empty)
 
   /**
    * exercise 16
@@ -155,52 +163,34 @@ sealed abstract class Stream[+A] {
   def scanRight[B](z: B)(f: (A, => B) => B): Stream[B] =
     foldRight((z, Stream(z)))((a,b) => {
       val b2 = f(a, b._1)
-      (b2, cons(b2, b._2))
+      (b2, Stream.cons(b2, b._2))
     })._2
-
-  def scanRightViaUnfold[B](z: B)(f: (A, => B) => B): Stream[B] =
-    unfold(this)(s => s.uncons match {
-      case Some(c) => Some(s.foldRight(z)(f), c.tail)
-      case _ => None
-    }) append(Stream(z))
 }
 
-object Empty extends Stream[Nothing] {
-  val uncons = None
-}
-
-sealed abstract class Cons[+A] extends Stream[A] {
-  def head: A
-  def tail: Stream[A]
-  val uncons = Some(this)
-}
+case object Empty extends Stream[Nothing]
+case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
 
 object Stream {
   def empty[A]: Stream[A] = Empty
 
-  def cons[A](hd: => A, tl: => Stream[A]): Stream[A] = new Cons[A] {
+  def cons[A](hd: => A, tl: => Stream[A]): Stream[A] = {
     lazy val head = hd
     lazy val tail = tl
+    Cons(() => head, () => tail)
   }
 
   def apply[A](as: A*): Stream[A] =
-    if (as.isEmpty) Empty else cons(as.head, apply(as.tail: _*))
+    if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
 
   /**
    * exercise 8
    */
-  def constant[A](a: A): Stream[A] = new Cons[A] {
-    val head = a
-    lazy val tail = this
-  }
+  def constant[A](a: A): Stream[A] = Stream.cons(a, constant(a))
 
   /**
    * exercise 9
    */
-  def from(n: Int): Stream[Int] = new Cons[Int] {
-    val head = n
-    lazy val tail = from(n+1)
-  }
+  def from(n: Int): Stream[Int] = Stream.cons(n, from(n+1))
 
   val ones: Stream[Int] = constant(1)
 
@@ -208,10 +198,7 @@ object Stream {
    * exercise 10
    */
   def fibs: Stream[Int] = {
-    def go(a: Int, b: Int): Stream[Int] = new Cons[Int] {
-      val head = a
-      lazy val tail = go(b, a + b)
-    }
+    def go(a: Int, b: Int): Stream[Int] = Stream.cons(a, go(b, a + b))
     go(0,1)
   }
 

@@ -15,6 +15,17 @@ class StreamSpec extends Specification {
     "return the first 2 elements" in {
       Stream(1,2,3,4).take(2).toList must_== List(1,2)
     }
+    "return empty stream when take(0)" in {
+      Stream(1,2,3,4).take(0).toList must_== List()
+    }
+  }
+  "drop" should {
+    "remove the first 2 elements" in {
+      Stream(1,2,3,4).drop(2).toList must_== List(3,4)
+    }
+    "not remove any elements when drop(0)" in {
+      Stream(1,2,3,4).drop(0).toList must_== List(1,2,3,4)
+    }
   }
   "takeWhile" should {
     "return the all starting elements of a Stream that match the given predicate" in {
@@ -40,6 +51,14 @@ class StreamSpec extends Specification {
   "takeWhile_1" should {
     "return the all starting elements of a Stream that match the given predicate" in {
       Stream(1,2,3,4,3,2,1).takeWhile_1(_ < 3).toList must_== List(1,2)
+    }
+  }
+  "headOption_1" should {
+    "return Some the head element when the stream is not empty" in {
+      Stream(1,2,3,4).headOption_1 must_== Some(1)
+    }
+    "return None when the stream is empty" in {
+      Stream.empty.headOption_1 must_== None
     }
   }
   "filter" should {
@@ -154,11 +173,6 @@ class StreamSpec extends Specification {
   "scanRight" should {
     "returns a Stream of the intermediate results" in {
       Stream(1,2,3).scanRight(0)(_ + _).toList must_== List(6,5,3,0)
-    }
-  }
-  "scanRightViaUnfold" should {
-    "returns a Stream of the intermediate results" in {
-      Stream(1,2,3).scanRightViaUnfold(0)(_ + _).toList must_== List(6,5,3,0)
     }
   }
 }
