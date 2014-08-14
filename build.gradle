@@ -20,5 +20,6 @@ tasks.withType(ScalaCompile) {
 
 dependencies {
     compile "org.scala-lang:scala-library:$scalaVersion.0"
+    compile "org.scalacheck:scalacheck_$scalaVersion:1.10.0"
     testCompile "org.specs2:specs2_$scalaVersion:$spec2Version"
 }
